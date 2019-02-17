@@ -1,0 +1,6 @@
+Change Component Footprint: Designator=J1 Old Footprint=CON-P1_2_(-) New Footprint=HEADER1_2(400)
+Change Component Footprint: Designator=J2 Old Footprint=CON-P1_2_(-) New Footprint=HEADER1_2(400)
+Change Component Footprint: Designator=J3 Old Footprint=CON-P1_2_(-) New Footprint=HEADER1_2(400)
+Change Component Footprint: Designator=J4 Old Footprint=CON-P1_2_(-) New Footprint=HEADER1_2(400)
+Change Component Footprint: Designator=J5 Old Footprint=CON-P1_2_(-) New Footprint=HEADER1_2(400)
+Added Room: Name=MachSacXa

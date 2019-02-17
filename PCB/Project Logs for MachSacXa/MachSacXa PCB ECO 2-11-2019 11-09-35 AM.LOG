@@ -1,0 +1,7 @@
+Added Component: Designator=U1(LM2576)
+Added Pin To Net: NetName=VCC-12V Pin=U1-1
+Added Pin To Net: NetName=NetD1_2 Pin=U1-2
+Added Pin To Net: NetName=GND Pin=U1-3
+Added Pin To Net: NetName=FB_1 Pin=U1-4
+Added Pin To Net: NetName=GND Pin=U1-5
+Added Member To Class: ClassName=MachSacXa Member=Component U1 LM2576S-5

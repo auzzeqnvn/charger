@@ -17,7 +17,7 @@ Library Manager: ArmAr.exe V5.06 update 6 (build 750)
 Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
 CPU DLL:         SARMCM3.DLL V5.26.2.0
 Dialog DLL:      DCM.DLL V1.17.2.0
-Target DLL:      UL2CM3.DLL V1.161.6.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.5.0
 Dialog DLL:      TCM.DLL V1.36.1.0
  
 <h2>Project:</h2>
@@ -27,11 +27,18 @@ Project File Date:  02/17/2019
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Target 1'
-compiling main.c...
+compiling app_middleware.c...
+app_middleware.c(15): warning:  #188-D: enumerated type mixed with another type
+              GPIO_WriteBit(GPIOA,IO_NAP1,state);
+app_middleware.c(27): warning:  #188-D: enumerated type mixed with another type
+      GPIO_WriteBit(GPIOB,IO_LED,state);
+app_middleware.c(28): warning:  #1-D: last line of file ends without a newline
+  }
+app_middleware.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=676 RO-data=252 RW-data=0 ZI-data=1632  
+Program Size: Code=1264 RO-data=268 RW-data=4 ZI-data=1636  
 FromELF: creating hex file...
-".\Objects\charger.axf" - 0 Error(s), 0 Warning(s).
+".\Objects\charger.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 

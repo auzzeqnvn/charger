@@ -1,0 +1,23 @@
+Removed Pin From Net: NetName=XA_1 Pin=U2-22
+Removed Pin From Net: NetName=GND Pin=U5-
+Added Component: Designator=LedFlick(LED_SMD (0805))
+Added Component: Designator=R_LedFlick(R/C_0805)
+Added Pin To Net: NetName=GND Pin=LedFlick-2
+Added Pin To Net: NetName=XA_1 Pin=U2-18
+Change Net Name : Old Net Name=NAP_3 New Net Name=NAP_2
+Change Net Name : Old Net Name=NAP_4 New Net Name=XA_2
+Change Net Name : Old Net Name=NAP_5 New Net Name=NAP_3
+Change Net Name : Old Net Name=XA_2 New Net Name=NAP_4
+Change Net Name : Old Net Name=XA_3 New Net Name=XA_4
+Change Net Name : Old Net Name=XA_4 New Net Name=NAP_5
+Added Pin To Net: NetName=NetLedFlick_1 Pin=LedFlick-1
+Added Pin To Net: NetName=NetLedFlick_1 Pin=R_LedFlick-2
+Added Net: Name=NetLedFlick_1
+Added Pin To Net: NetName=NetR_LedFlick_1 Pin=R_LedFlick-1
+Added Pin To Net: NetName=NetR_LedFlick_1 Pin=U2-27
+Added Net: Name=NetR_LedFlick_1
+Added Pin To Net: NetName=XA_3 Pin=U2-22
+Added Net: Name=XA_3
+Added Member To Class: ClassName=MachSacXa Member=Component LedFlick LED
+Added Member To Class: ClassName=MachSacXa Member=Component R_LedFlick 
+Added Room: Name=MachSacXa
