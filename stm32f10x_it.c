@@ -23,6 +23,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "config.h"
+#include "app_middleware.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -34,6 +36,9 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+uint32_t	app_charing_time_count = 0;
+uint16_t	app_update_adc_timer = 0;
+uint8_t		app_adc_count = 0;
 
 /******************************************************************************/
 /*            Cortex-M3 Processor Exceptions Handlers                         */
@@ -142,7 +147,29 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f10x_xx.s).                                            */
 /******************************************************************************/
+ void TIM2_IRQHandler(void)
+{
 
+	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+		GPIO_WriteBit(IOD_LED_PORT,IOD_LED,!GPIO_ReadInputDataBit(IOD_LED_PORT,IOD_LED));
+		if(app_charing_time_count < app_charging_time)	APP_midd_charging_control(1,ON);
+		else if(app_charing_time_count < CHARGING_TIME_FULL)	APP_midd_charging_control(1,OFF);
+		else app_charing_time_count = 0;
+		app_charing_time_count++;
+		
+		app_update_adc_timer++;
+		if(app_update_adc_timer > 200)
+		{
+			app_update_adc_timer = 0;
+			ADC_BUFF[0][app_adc_count] = ADCBuffer[0];
+			ADC_BUFF[5][app_adc_count] = ADCBuffer[5];
+			app_adc_count++;
+			if(app_adc_count > 19)	app_adc_count = 0;
+		}
+	}
+}
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None

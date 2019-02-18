@@ -8,7 +8,7 @@
 #define IOD_IN3  GPIO_Pin_15
 #define IOD_IN3_PORT    GPIOC
 
-#define IOD_NAP1 GPIO_Pin_1
+#define IOD_NAP1 GPIO_Pin_2
 #define IOD_NAP1_PORT   GPIOB
 #define IOD_XA1  GPIO_Pin_12
 #define IOD_XA1_PORT    GPIOB
@@ -57,10 +57,19 @@
 #define IOD_LED  GPIO_Pin_5
 #define IOD_LED_PORT    GPIOB
 
+#define	IOD_485_DIR	GPIO_Pin_11
+#define	IOD_485_DIR_PORT	GPIOB
+
 #define ON 1
 #define OFF 0
 
+#define	IN	0
+#define	OUT	1
 
+#define	APP_USART_BUFF_LEN 200
 
+extern uint8_t	APP_USART_BUFF[APP_USART_BUFF_LEN];
+extern uint8_t v_usart_buff_count;
+extern uint16_t	ADCBuffer[10];
 void APP_config(void);
 

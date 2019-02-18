@@ -3,6 +3,15 @@
 GPIO_InitTypeDef GPIO_InitStructure;
 ADC_InitTypeDef ADC_InitStructure;
 DMA_InitTypeDef DMA_InitStructure;
+USART_InitTypeDef USART_InitStructure;
+TIM_TimeBaseInitTypeDef timBaseStruct;
+NVIC_InitTypeDef	NVIC_InitStructure;
+
+uint8_t	APP_USART_BUFF[APP_USART_BUFF_LEN];
+uint8_t v_usart_buff_count = 0;
+
+uint16_t	ADCBuffer[10];
+
 
 void APP_config_clock(void)
 {
@@ -98,11 +107,17 @@ void APP_config_io(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(IOD_LED_PORT, &GPIO_InitStructure);
+	
+	/* khoi tao chan dieu khien huong du lieu 485 */
+	GPIO_InitStructure.GPIO_Pin = IOD_485_DIR;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(IOD_485_DIR_PORT, &GPIO_InitStructure);
 }
 
 void APP_config_adc(void)
 {
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 
     /* khoi tao cac chan nhan gia tri dong dien */
     GPIO_InitStructure.GPIO_Pin = IOA_CURRENT1;
@@ -147,27 +162,45 @@ void APP_config_adc(void)
     GPIO_Init(IOA_VOL5_PORT, &GPIO_InitStructure);
     
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
-    ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+    ADC_InitStructure.ADC_ScanConvMode = ENABLE;
     ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
     ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-    ADC_InitStructure.ADC_NbrOfChannel = 1;
+    ADC_InitStructure.ADC_NbrOfChannel = 10;
     ADC_Init(ADC1, &ADC_InitStructure);
     /* ADC1 regular channels configuration */ 
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_28Cycles5);  
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 4, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 5, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_5, 6, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 7, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 8, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 9, ADC_SampleTime_28Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 10, ADC_SampleTime_28Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);  
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 4, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_4, 5, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_5, 6, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 7, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 8, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 9, ADC_SampleTime_239Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 10, ADC_SampleTime_239Cycles5);
 
+
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+	
+	DMA_InitStructure.DMA_BufferSize = 10;
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)ADCBuffer;
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
+	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+
+	DMA_Cmd(DMA1_Channel1, ENABLE);
 
     /* Enable ADC1 */
     ADC_Cmd(ADC1, ENABLE);
+	ADC_DMACmd(ADC1, ENABLE);
     /* Enable ADC1 reset calibration register */   
     ADC_ResetCalibration(ADC1);
     /* Check the end of ADC1 reset calibration register */
@@ -185,12 +218,60 @@ void APP_config_adc(void)
 void APP_config_usart(void)
 {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1,ENABLE);
+	
+	/* Configure PA9 and PA10 as USART1 TX/RX */
+    
+    /* PA9 = alternate function push/pull output */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    
+    /* PA10 = floating input */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    
+    /* Configure and initialize usart... */
+    USART_InitStructure.USART_BaudRate = 9600;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+        
+    USART_Init(USART1, &USART_InitStructure);
+    
+    /* Enable USART1 */
+    USART_Cmd(USART1, ENABLE);   
+}
+
+void	APP_config_timer2(void)
+{
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	
+	timBaseStruct.TIM_Prescaler = 360-1;
+	timBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1;
+	timBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
+	timBaseStruct.TIM_Period = 10-1;
+	timBaseStruct.TIM_RepetitionCounter = 0;
+
+	TIM_TimeBaseInit(TIM2, &timBaseStruct);
+	TIM_Cmd(TIM2, ENABLE);
+	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE );
+	
+	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_EnableIRQ(TIM2_IRQn);
 }
 
 void APP_config(void)
 {
-    //APP_config_clock();
+    APP_config_clock();
     APP_config_io();
     APP_config_adc();
+	APP_config_timer2();
     APP_config_usart();
 }
