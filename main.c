@@ -34,8 +34,8 @@ void main(void)
 		buff[0] = buff[0] / 20;
 		buff[5] = buff[5] / 20;
 		memset(printf_buff,0,sizeof(printf_buff));
-		sprintf(printf_buff,"ADC1 : %dmV ADC6 : %dmV \r\n",buff[0]*3300/4096,(buff[5]*3300/4096)*2);
+		sprintf(printf_buff,"ADC1 : %dmV ADC6 : %dmV \r\n",buff[0]*3300/4095,(buff[5]*3300/4095)*2);
 		USART_Prdata(USART1,printf_buff);
-        delay_ms(20000);
+        delay_ms(10000);
     }
 }

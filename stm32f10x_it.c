@@ -154,13 +154,14 @@ void SysTick_Handler(void)
 	{
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 		GPIO_WriteBit(IOD_LED_PORT,IOD_LED,!GPIO_ReadInputDataBit(IOD_LED_PORT,IOD_LED));
+		
 		if(app_charing_time_count < app_charging_time)	APP_midd_charging_control(1,ON);
 		else if(app_charing_time_count < CHARGING_TIME_FULL)	APP_midd_charging_control(1,OFF);
 		else app_charing_time_count = 0;
 		app_charing_time_count++;
 		
 		app_update_adc_timer++;
-		if(app_update_adc_timer > 200)
+		if(app_update_adc_timer > 1000)
 		{
 			app_update_adc_timer = 0;
 			ADC_BUFF[0][app_adc_count] = ADCBuffer[0];

@@ -24,8 +24,8 @@ void APP_config_clock(void)
     RCC_HCLKConfig(RCC_SYSCLK_Div1);
     RCC_PCLK1Config(RCC_HCLK_Div2);
     RCC_PCLK2Config(RCC_HCLK_Div1);
-    RCC_ITConfig(RCC_IT_PLLRDY,DISABLE);
-    RCC_ADCCLKConfig(RCC_PCLK2_Div2);
+    //RCC_ITConfig(RCC_IT_PLLRDY,DISABLE);
+    RCC_ADCCLKConfig(RCC_PCLK2_Div4);
 }
 void APP_config_io(void)
 {
@@ -250,7 +250,7 @@ void	APP_config_timer2(void)
 {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 	
-	timBaseStruct.TIM_Prescaler = 360-1;
+	timBaseStruct.TIM_Prescaler = 720-1;
 	timBaseStruct.TIM_ClockDivision = TIM_CKD_DIV1;
 	timBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;
 	timBaseStruct.TIM_Period = 10-1;
